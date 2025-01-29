@@ -21,5 +21,5 @@ simulate_epoch <- function(down, ytg, fp) {
     drive_count <- drive_count + 1
   }
   
-  return(score)
+  score
 }

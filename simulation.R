@@ -4,5 +4,5 @@ top_level_function <- function(down, ytg, fp, n) {
   for (x in 1:n) {
     epochs_vector[x] <- simulate_epoch(down, ytg, fp)
   }
-  return(mean(epochs_vector))
+  mean(epochs_vector)
 }

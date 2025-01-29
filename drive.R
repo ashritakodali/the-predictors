@@ -9,5 +9,5 @@ simulate_drive <- function(state) {
   # having these arguments if we never actually call them
   # in our other functions
   
-  return(state)
+  state
 }
