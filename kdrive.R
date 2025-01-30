@@ -1,6 +1,6 @@
 drive=function(down,ytg,fp,n){
   while(down <= 4){#Simulate plays from the given down through 4th down
-    fp=fp+sample(-120:120,1)#Random yardage gain/loss
+    fp=fp+sample(-110:120,1)#Random yardage gain/loss
     if(ytg<=0){#First down achieved
       down=1#Reset to first down
     }else{
@@ -10,10 +10,7 @@ drive=function(down,ytg,fp,n){
       break
     }
   }#Determine points based on final field position
-  if(fp < -10){
-    points=-3
-  }
-  else if(fp>=-10&fp<0){
+  if(fp<0){
     points=-7
   }
   else if(fp>=0&fp<100){
