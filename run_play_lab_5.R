@@ -3,6 +3,7 @@
 ###########################################################################
 
 library(tidyverse)
+library(nnet)
 
 # Function to simulate going for it on 4th down
 go_for_it <- function(down, ytg, newfp, ydsGained){
