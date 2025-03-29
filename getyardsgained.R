@@ -35,4 +35,4 @@ getyg=function(fp){
       0.003, 0.4,0.18,0.362,0.013,0.003,0.036,0.003))
     yg=non_red_zone_yards[play_index]
     play <- non_red_zone_plays[play_index]}
-  return(c(round(yg,0), play))}
+  return(round(yg,0))}

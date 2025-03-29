@@ -54,7 +54,7 @@ run_play <- function(down, ytg, fp){
   else{
     # Sample from normal distribution with defined parameters for yards gained
     # Round to make sure we only use whole numbers for yards gained
-    ydsGained <- round(rnorm(1, ydMean, ydSD), 0)
+    ydsGained=getyg(fp)
     # Set new field position based on yards gained
     newfp <- fp - ydsGained
     # Check if it is 1st, 2nd, or 3rd down
@@ -149,3 +149,5 @@ run_play <- function(down, ytg, fp){
     }
   }
 }
+
+
