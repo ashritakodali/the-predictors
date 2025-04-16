@@ -30,14 +30,17 @@ samplingData <- samplingData %>%
     description_lower = str_to_lower(description),
     
     is_sunny = if_else(str_detect(description_lower, "sun|clear|fair|dry"), 1, 0),
-    is_cloudy = if_else(str_detect(description_lower, "cloud|clound|coudy|clouidy"), 1, 0),
+    is_cloudy = if_else(str_detect(description_lower, "cloud|clound|coudy|clouidy|overcast") &
+                          !str_detect(description_lower, "sunny with some clouds"), 1, 0),
     is_snowing = if_else(str_detect(description_lower, "snow|flurries|freezing rain|sleet"), 1, 0),
-    is_haze_fog = if_else(str_detect(description_lower, "haze|fog|mist|overcast|hazey|shallow fog"), 1, 0),
-    is_raining = if_else(str_detect(description_lower, "rain|shower|drizzle|storm"), 1, 0),
+    is_haze_fog = if_else(str_detect(description_lower, "haze|fog|mist|hazey|shallow fog|hazy"), 1, 0),
+    is_raining = if_else(str_detect(description_lower, "rain|shower|drizzle|storm") & 
+                           !str_detect(description_lower, "zero percent chance of rain|no chance of rain|snow showers|freezing rain|mostly cloudy with light rain forecasted|cloudy with rain likely"), 1, 0),
     is_indoors = if_else(str_detect(description_lower, "indoor|control|controlled"),1,0),
     is_hot = if_else(str_detect(description_lower, "hot|warm|very warm|unseasonably warm"), 1, 0),
     is_cold = if_else(str_detect(description_lower, "cold|freezing|frigid|very cold|bitterly cold|chilly"), 1, 0),
-    is_humid = if_else(humidity, >= 65, 1, 0)
+    is_humid = if_else(humidity >= 65, 1, 0),
+    is_windy = if_else(wind_speed >= 15, 1, 0)
   )
 
 
