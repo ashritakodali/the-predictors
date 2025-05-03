@@ -1,16 +1,14 @@
+#setwd("C:/Users/nblau/Downloads")
 #samplingData <- readRDS('pbp2014-2024.rds')
 library(tidyverse)
-source('weather_yards_gained.R')
-
-# Choose weather conditions
-weather <- 'snowing'
+#setwd("C:/Users/nblau/Documents/Stat 4800/project")
+source('getyg_weather.R')
 
 # Fit a logistic regression model for field goal attempts
 fgData <- samplingData %>% filter(play_type == 'field_goal')
 fgData$field_goal_result <- ifelse(fgData$field_goal_result == 'blocked', 'missed', fgData$field_goal_result)
 fgData$field_goal_factor <- as.numeric(factor(fgData$field_goal_result, levels = c("missed", "made"))) - 1
 fgLogisReg <- glm(field_goal_factor ~ yardline_100, data = fgData, family = binomial)
-
 
 library(nnet)
 
@@ -57,29 +55,62 @@ punt <- function(down, ytg, fp){
 }
 
 #Actual function to run each play
-run_play2 <- function(down, ytg, fp){
+run_play2 <- function(down, ytg, fp, weather){
+  print(paste("Weather condition:", weather))
   # Set turnover rate, mean and standard deviation for yards gained distribution
   turnoverRate <- 0.05
   ydMean <- 3
   ydSD <- 2
+
   # Sample to see if a turnover occurs
-  #check_turnover <- sample(c('yes', 'no'), 1, prob=c(turnoverRate, 1-turnoverRate))
   check_turnover <- 'no'
   if (check_turnover == 'yes'){
     list(D = 1, YTG = 10, FP = 100-fp, exit_drive=1)
   }
   # No turnover
   else{
-    # Sample from normal distribution with defined parameters for yards gained
-    # Round to make sure we only use whole numbers for yards gained
-    result <- getyg(39, 'sunny')
+    
+    result <- getyg(fp, weather)
+    
     ydsGained <- as.numeric(result[1])
+    print(ydsGained)
+    
+    #debug
+    print(class(fp))
+    
     play_choice <- result[2]
+    
+    #debug
+    print(class(play_choice))
+
+    if (is.na(ydsGained)) {
+      stop("ydsGained could not be converted to numeric!")
+    }
+
+    fp <- as.numeric(fp)
+
+    if (is.na(fp)) {
+      stop("fp is not numeric!")
+    }
+    
     # Set new field position based on yards gained
     newfp <- fp - ydsGained
+    
+    # Touchdown logic
+    if (newfp <= 0) {
+      return(list(D = 1, YTG = 0, FP = 105, exit_drive = 1))  # Signal TD
+    }
+    
+    # Cap new field position between 0 and 100 
+    newfp <- max(min(newfp, 100), 0)
+    
+    # Check the new field position
+    print(newfp)
+    
     if (play_choice %in% c('Run Fumble', 'Pass Interception', 'Pass Fumble', 'QB Sack Fumble')){
       list(D = 1, YTG = 10, FP = 100-fp, exit_drive=1)
     }
+    
     # Check if it is 1st, 2nd, or 3rd down
     if (down < 4){
       # If new field position is 0, it is a touchdown and exit to add points
@@ -96,7 +127,6 @@ run_play2 <- function(down, ytg, fp){
         list(D = down+1, YTG = ytg-ydsGained, FP = newfp, exit_drive = 0)
       }
     }
-    
     
     # If 4th down, follow this progression
     else{
@@ -116,4 +146,7 @@ run_play2 <- function(down, ytg, fp){
   }
 }
 
-run_play2(2, 10, 15)
+
+
+
+
